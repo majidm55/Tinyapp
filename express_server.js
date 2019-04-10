@@ -49,6 +49,12 @@ app.post("/urls", (req, res) => {
   res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 
+app.post("/urls/:shortURL/delete", (req, res) => {
+  let short = req.params.shortURL;
+  delete urlDatabase[short];
+  res.redirect("/urls");
+});
+
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });

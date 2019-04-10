@@ -11,12 +11,17 @@
 <body style="font-size:20px; padding:50px;">
    <% include ./partials/_header %>
     My URLs
-    <p>Helo</p>
+
     <ul>
        <% for(url in urls){ %>
-       <a href = '#'><li> <%= url %>
+    <form method="POST" action="/urls/<%= url %>/delete">
+
+      <button type="submit">Delete </button>
+      <a href = '#'><li> <%= url %>
         <%= urls[url]%></li></a>
+      </form>
        <% } %>
+
     </ul>
 </body>
 </body>
