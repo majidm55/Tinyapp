@@ -53,6 +53,12 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+app.get("/u/:shortURL", (req, res) => {
+   let short = req.params.shortURL;
+   const longURL = urlDatabase[short];
+  res.redirect(longURL);
+});
+
 
 app.get("/urls/:shortURL", (req, res) => {
   var short = req.params.shortURL;
