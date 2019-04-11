@@ -21,13 +21,23 @@ function generateRandomString() {
   console.log(randString);
 }
 
-
-
-
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+
+const users = {
+  "userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  }
+}
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -84,6 +94,22 @@ app.post("/login", (req,res) => {                      //http://localhost:8080/u
   res.cookie("username", req.body.username);
   res.redirect("/urls");
 });
+
+app.get("/register", (req, res) => {
+res.render("urls_register");
+});
+
+app.post("/register", (req,res) => {
+  const id = Object.keys(users).length + 1;
+  const {email, password} = req.body;
+  users[id] = { id : id,
+                     email : email,
+                     password : pasword };
+  res.cookie("user_id", id);
+  res.redirect("/urls");
+});
+
+
 
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
