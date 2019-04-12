@@ -1,6 +1,6 @@
-<% if( userName) { %>
+<% if( user ) { %>
   <form method="POST" action="/logout">
-      <h5>Logged in as: </a><%= userName %></h5>
+      <h5>Logged in as: </a><%= user.email %></h5>
       <button type="submit" class="btn-primary">Logout</button>
   </form>
 <% }

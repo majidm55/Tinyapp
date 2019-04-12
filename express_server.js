@@ -39,15 +39,14 @@ const users = {
   }
 }
 // email match function
-// function emailMatch (email) {
-//   for (id in users) {
-//     if (users[id].email === req.body.email) {
-//       return true;
-//   }
-//   }
-//     return false;
-
-// }
+function emailMatch (email) {
+  for (id in users) {
+    if (users[id].email === email) {
+      return users[id];
+    }
+  }
+  return false;
+}
 
 
 app.get("/", (req, res) => {
@@ -59,14 +58,17 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase, userName: req.cookies["username"], };
-  // console.log(userID);
+app.get("/urls", (req, res) => {                ///user id cookies
+  let userID = req.cookies["user_id"]
+  let user = users[userID]
+  let templateVars = { urls: urlDatabase, user: user };
   res.render("urls_index",templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  let templateVars = {userName: req.cookies["username"], };
+  let userID = req.cookies["user_id"]
+  let user = users[userID]
+  let templateVars = {user: user };
   res.render("urls_new",templateVars);
 });
 
@@ -83,10 +85,9 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 app.get("/urls/:id" , (req, res) => {
 
-  let templateVars = {
-    userName: req.cookies["username"],
-    shortURL: req.params.id
-  };
+  let userID = req.cookies["user_id"]
+  let user = users[userID]
+  let templateVars = { user: user };
   res.render("urls_show",templateVars);
 
 });
@@ -98,12 +99,15 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.post("/logout", (req,res) => {                     //Logout
-  res.clearCookie("username");
+  res.clearCookie("user_id");
   res.redirect("/urls");
 });
 
-app.post("/login", (req,res) => {                      //http://localhost:8080/urls/login
-  res.cookie("username", req.body.username);
+app.post("/login", (req,res) => {
+                     //http://localhost:8080/urls/login
+  let user = emailMatch(req.body.email)
+  res.cookie("user_id", user.id);
+  console.log(req.body.email);
   res.redirect("/urls");
 });
 
