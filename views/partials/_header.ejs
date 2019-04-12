@@ -1,12 +1,16 @@
-<% if( userName ) { %>
+<% if( userName) { %>
   <form method="POST" action="/logout">
       <h5>Logged in as: </a><%= userName %></h5>
       <button type="submit" class="btn-primary">Logout</button>
   </form>
 <% }
 else { %>
+  <a href="/login" >Login</a> |
+  <a href="/register" >Register</a>
+
+
   <form method="POST" action="/login">
-      <h5>Username: </h5>
+
       <input class="form-control" type="text" name="username">
       <button type="submit" class="btn-primary">Login</button>
   </form>

@@ -61,6 +61,7 @@ app.get("/urls.json", (req, res) => {
 
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase, userName: req.cookies["username"], };
+  // console.log(userID);
   res.render("urls_index",templateVars);
 });
 
@@ -104,6 +105,10 @@ app.post("/logout", (req,res) => {                     //Logout
 app.post("/login", (req,res) => {                      //http://localhost:8080/urls/login
   res.cookie("username", req.body.username);
   res.redirect("/urls");
+});
+
+app.get("/login", (req, res) => {
+res.render("urls_login");
 });
 
 app.get("/register", (req, res) => {
