@@ -3,7 +3,8 @@
       <h5>Logged in as: </a><%= userName %></h5>
       <button type="submit" class="btn-primary">Logout</button>
   </form>
-<% } else { %>
+<% }
+else { %>
   <form method="POST" action="/login">
       <h5>Username: </h5>
       <input class="form-control" type="text" name="username">

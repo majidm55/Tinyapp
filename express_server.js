@@ -100,14 +100,30 @@ res.render("urls_register");
 });
 
 app.post("/register", (req,res) => {
+
+  for (id in users) {
+  if (users[id].email === req.body.email) {
+    res.status(404)        // HTTP status 404: NotFound
+    .send('Username already exists');
+}
+
+}
+
+  if (req.body.email == "" || req.body.password == "") {
+    res.status(404)        // HTTP status 404: NotFound
+   .send('Not found');
+  }
   const id = Object.keys(users).length + 1;
   const {email, password} = req.body;
   users[id] = { id : id,
                      email : email,
-                     password : pasword };
+                     password : password };
+
   res.cookie("user_id", id);
   res.redirect("/urls");
+
 });
+
 
 
 
