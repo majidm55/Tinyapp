@@ -38,6 +38,17 @@ const users = {
     password: "dishwasher-funk"
   }
 }
+// email match function
+// function emailMatch (email) {
+//   for (id in users) {
+//     if (users[id].email === req.body.email) {
+//       return true;
+//   }
+//   }
+//     return false;
+
+// }
+
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -101,18 +112,19 @@ res.render("urls_register");
 
 app.post("/register", (req,res) => {
 
-  for (id in users) {
-  if (users[id].email === req.body.email) {
-    res.status(404)        // HTTP status 404: NotFound
-    .send('Username already exists');
-}
+for(i in users){
+   if(users[i].email == req.body.email){ //checking if email already exists
+   res.status(400)
+   .send('email already exists');
+   }
+ }
 
-}
+ if(req.body.email == "" || req.body.password == "") {
+   res.status(400)        // HTTP status 400: NotFound
+  .send('Not found');}
 
-  if (req.body.email == "" || req.body.password == "") {
-    res.status(404)        // HTTP status 404: NotFound
-   .send('Not found');
-  }
+
+
   const id = Object.keys(users).length + 1;
   const {email, password} = req.body;
   users[id] = { id : id,
