@@ -77,6 +77,12 @@ app.post("/urls", (req, res) => {
   res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 
+app.get("/u/:shortURL", (req, res) => {
+   let shortURL = req.params.shortURL;
+   const longURL = urlDatabase[short];
+  res.redirect(longURL);
+});
+
 app.post("/urls/:shortURL/delete", (req, res) => {
   let short = req.params.shortURL;
   delete urlDatabase[short];
@@ -84,10 +90,12 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 app.get("/urls/:id" , (req, res) => {
+     let short = req.params.id;
+   const longURL = urlDatabase[short];
 
   let userID = req.cookies["user_id"]
   let user = users[userID]
-  let templateVars = { user: user };
+  let templateVars = { user: user, shortURL:short };
   res.render("urls_show",templateVars);
 
 });
@@ -153,7 +161,7 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/u/:shortURL", (req, res) => {
-   let short = req.params.shortURL;
+   let shortURL = req.params.shortURL;
    const longURL = urlDatabase[short];
   res.redirect(longURL);
 });
