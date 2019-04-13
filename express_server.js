@@ -29,19 +29,28 @@ var urlDatabase = {
 const users = {
   "userRandomID": {
     id: "userRandomID",
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur"
+    email: "abc@d.com",
+    password: "1234"
   },
  "user2RandomID": {
     id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk"
+    email: "abc@e.com",
+    password: "12345"
   }
 }
 // email match function
 function emailMatch (email) {
   for (id in users) {
     if (users[id].email === email) {
+      return users[id];
+    }
+  }
+  return false;
+}
+
+function passMatch (password) {
+  for (id in users) {
+    if (users[id].password === password) {
       return users[id];
     }
   }
@@ -112,11 +121,18 @@ app.post("/logout", (req,res) => {                     //Logout
 });
 
 app.post("/login", (req,res) => {
-                     //http://localhost:8080/urls/login
-  let user = emailMatch(req.body.email)
-  res.cookie("user_id", user.id);
-  console.log(req.body.email);
+  email = req.body.email;
+  password =req.body.password;
+
+  let user = emailMatch(email, users);
+  if (user && passMatch(password,users)) {
+    let user_id = user.id;
+  res.cookie("user_id", user_id);
+  // console.log(req.body.email);
   res.redirect("/urls");
+} else {
+  res.status(403).send("Username or password incorrect")
+}
 });
 
 app.get("/login", (req, res) => {
