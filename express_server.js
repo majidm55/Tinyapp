@@ -76,10 +76,14 @@ app.get("/urls", (req, res) => {                ///user id cookies
 
 app.get("/urls/new", (req, res) => {
   let userID = req.cookies["user_id"]
+
+  if (!userID){
+  res.redirect("/login")
+ } else {
   let user = users[userID]
-  let templateVars = {user: user };
-  res.render("urls_new",templateVars);
-});
+  let templateVars = {user: user };}
+  res.render("urls_new")
+ });
 
 app.post("/urls", (req, res) => {
   console.log(req.body);  // Log the POST request body to the console
