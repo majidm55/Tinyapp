@@ -108,11 +108,11 @@ app.post("/urls", (req, res) => {
   res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 
-app.get("/u/:shortURL", (req, res) => {
-   let shortURL = req.params.shortURL;
-   const longURL = urlDatabase[shortURL];
-  res.redirect(longURL);
-});
+// app.get("/u/:shortURL", (req, res) => {
+//    let shortURL = req.params.shortURL;
+//    const longURL = urlDatabase[shortURL];
+//   res.redirect(longURL);
+// });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   let short = req.params.shortURL;
@@ -197,7 +197,7 @@ app.get("/hello", (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
    let shortURL = req.params.shortURL;
-   const longURL = urlDatabase[short];
+   let longURL = urlDatabase[shortURL].longURL;
   res.redirect(longURL);
 });
 
