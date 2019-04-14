@@ -22,11 +22,14 @@ function generateRandomString() {
 }
 
 var urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  b6UTxQ: { longURL: "https://www.tsn.ca",
+            userID: "userRandomID" },
+
+  i3BoGr: { longURL: "https://www.google.ca",
+            userID: "user2RandomID" }
 };
 
-const users = {
+var users = {
   "userRandomID": {
     id: "userRandomID",
     email: "abc@d.com",
@@ -58,6 +61,17 @@ function passMatch (password) {
 }
 
 
+function urlsForUser (userID) {
+  let urls = {};
+  for (shortURL in urlDatabase) {
+    if (urlDatabase[shortURL].userID === userID) {
+      urls[shortURL] = urlDatabase[shortURL];
+    }
+  }
+  return urls;
+}
+
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 
@@ -69,10 +83,14 @@ app.get("/urls.json", (req, res) => {
 
 app.get("/urls", (req, res) => {                ///user id cookies
   let userID = req.cookies["user_id"]
-  let user = users[userID]
-  let templateVars = { urls: urlDatabase, user: user };
-  res.render("urls_index",templateVars);
-});
+    if (!userID){
+      res.redirect("/login"); }
+
+      let user = users[userID]
+      let templateVars = { urls: urlsForUser(userID), user: user};
+      res.render("urls_index",templateVars);
+ });
+
 
 app.get("/urls/new", (req, res) => {
   let userID = req.cookies["user_id"]
@@ -92,7 +110,7 @@ app.post("/urls", (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
    let shortURL = req.params.shortURL;
-   const longURL = urlDatabase[short];
+   const longURL = urlDatabase[shortURL];
   res.redirect(longURL);
 });
 
@@ -172,9 +190,6 @@ for(i in users){
   res.redirect("/urls");
 
 });
-
-
-
 
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");

@@ -9,24 +9,26 @@
 
 </head>
 <body style="font-size:20px; padding:50px;">
-   <% include ./partials/_header %>
+  <header> <% include ./partials/_header %> </header>
     My URLs
 
     <ul>
-       <% for(url in urls){ %>
+       <% for(var url in urls){ %>
 
         <li>
 
           <form method="POST" action="/urls/<%= url %>/delete">
+
           <a href="/urls/<%=url %>" >Edit</a>
 
             <button type="submit">Delete </button>
+
               <a href="/urls/<%= url %>"><%= url %></a>
 
-              <a href="<%= urls[url]%>"><%= urls[url]%></a>
+              <a href="<%= urls[url].longURL%>">Long URL</a>
           </form>
         </li>
-       <% } %>
+       <% }; %>
 
     </ul>
 </body>
