@@ -3,12 +3,14 @@ var app = express();
 var PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 var cookieParser = require('cookie-parser')
-app.use(cookieParser())
+const bcrypt = require('bcrypt');
 
+app.use(cookieParser())
 
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.set("view engine", "ejs");
+
 
 function generateRandomString() {
   var randString = "";
@@ -108,11 +110,6 @@ app.post("/urls", (req, res) => {
   res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 
-// app.get("/u/:shortURL", (req, res) => {
-//    let shortURL = req.params.shortURL;
-//    const longURL = urlDatabase[shortURL];
-//   res.redirect(longURL);
-// });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   let short = req.params.shortURL;
@@ -144,13 +141,12 @@ app.post("/logout", (req,res) => {                     //Logout
 
 app.post("/login", (req,res) => {
   email = req.body.email;
-  password =req.body.password;
+  password = req.body.password;
 
   let user = emailMatch(email, users);
   if (user && passMatch(password,users)) {
     let user_id = user.id;
   res.cookie("user_id", user_id);
-  // console.log(req.body.email);
   res.redirect("/urls");
 } else {
   res.status(403).send("Username or password incorrect")
@@ -178,13 +174,12 @@ for(i in users){
    res.status(400)        // HTTP status 400: NotFound
   .send('Not found');}
 
-
-
+  const hashedPassword = bcrypt.hashSync(password, 10);
   const id = Object.keys(users).length + 1;
   const {email, password} = req.body;
   users[id] = { id : id,
                      email : email,
-                     password : password };
+                     password : hashedPassword };
 
   res.cookie("user_id", id);
   res.redirect("/urls");
