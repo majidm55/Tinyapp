@@ -35,32 +35,37 @@ var users = {
   "userRandomID": {
     id: "userRandomID",
     email: "abc@d.com",
-    password: "1234"
+    password:bcrypt.hashSync("1234", 10),
   },
  "user2RandomID": {
     id: "user2RandomID",
     email: "abc@e.com",
-    password: "12345"
+    password:bcrypt.hashSync("12345", 10)
+
   }
 }
 // email match function
-function emailMatch (email) {
-  for (id in users) {
+function userMatch (email,password) {
+  for (let id in users) {
+
     if (users[id].email === email) {
-      return users[id];
+      if (bcrypt.compareSync(password, users[id].password)) {
+        return users[id] ;
+        console.log(users[id],"we done");
+      }
     }
   }
   return false;
 }
 
-function passMatch (password) {
-  for (id in users) {
-    if (users[id].password === password) {
-      return users[id];
-    }
-  }
-  return false;
-}
+// function passMatch (password) {
+//   for (id in users) {
+//     if (users[id].password === password) {
+//       return users[id];
+//     }
+//   }
+//   return false;
+// }
 
 
 function urlsForUser (userID) {
@@ -72,6 +77,15 @@ function urlsForUser (userID) {
   }
   return urls;
 }
+
+// function hashCheck(em, pw) {
+//    const userID = Object.keys(users)
+//    const user = userID.filter(item => {
+//        return users[item].email === em
+//    })
+//    if (user.length > 0) {
+//        return
+//    }
 
 
 app.get("/", (req, res) => {
@@ -142,16 +156,19 @@ app.post("/logout", (req,res) => {                     //Logout
 app.post("/login", (req,res) => {
   email = req.body.email;
   password = req.body.password;
-
-  let user = emailMatch(email, users);
-  if (user && passMatch(password,users)) {
+  // console.log("posting login",email,password)
+  let user = userMatch(email,password)
+  if (user) {
+    // console.log("usermatched", user);
     let user_id = user.id;
-  res.cookie("user_id", user_id);
-  res.redirect("/urls");
-} else {
-  res.status(403).send("Username or password incorrect")
-}
+    console.log(user_id);
+    res.cookie("user_id", user_id);
+    res.redirect("/urls");
+  }
+
+  res.status(403).send("Username or password incorrect");
 });
+
 
 app.get("/login", (req, res) => {
 res.render("urls_login");
@@ -174,9 +191,10 @@ for(i in users){
    res.status(400)        // HTTP status 400: NotFound
   .send('Not found');}
 
-  const hashedPassword = bcrypt.hashSync(password, 10);
   const id = Object.keys(users).length + 1;
   const {email, password} = req.body;
+  const hashedPassword = bcrypt.hashSync(password, 10);
+
   users[id] = { id : id,
                      email : email,
                      password : hashedPassword };
