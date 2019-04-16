@@ -1,3 +1,4 @@
+var cookieSession = require('cookie-session');
 var express = require("express");
 var app = express();
 var PORT = 8080; // default port 8080
@@ -5,7 +6,10 @@ const bodyParser = require("body-parser");
 var cookieParser = require('cookie-parser')
 const bcrypt = require('bcrypt');
 
-app.use(cookieParser())
+app.use(cookieSession({
+  name: 'session',
+  keys: ["id", "user_id"]
+}))
 
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -98,7 +102,7 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {                ///user id cookies
-  let userID = req.cookies["user_id"]
+  let userID = req.session.user_id
     if (!userID){
       res.redirect("/login"); }
 
@@ -109,7 +113,7 @@ app.get("/urls", (req, res) => {                ///user id cookies
 
 
 app.get("/urls/new", (req, res) => {
-  let userID = req.cookies["user_id"]
+  let userID = req.sesion.user_id
 
   if (!userID){
   res.redirect("/login")
@@ -135,7 +139,7 @@ app.get("/urls/:id" , (req, res) => {
      let short = req.params.id;
    const longURL = urlDatabase[short];
 
-  let userID = req.cookies["user_id"]
+  let userID = req.session.user_id
   let user = users[userID]
   let templateVars = { user: user, shortURL:short };
   res.render("urls_show",templateVars);
@@ -160,9 +164,8 @@ app.post("/login", (req,res) => {
   let user = userMatch(email,password)
   if (user) {
     // console.log("usermatched", user);
-    let user_id = user.id;
-    console.log(user_id);
-    res.cookie("user_id", user_id);
+    let userID = user.id;
+    req.session.user_id = userID;
     res.redirect("/urls");
   }
 
@@ -199,7 +202,7 @@ for(i in users){
                      email : email,
                      password : hashedPassword };
 
-  res.cookie("user_id", id);
+  req.session.user_id;
   res.redirect("/urls");
 
 });
