@@ -93,7 +93,7 @@ function urlsForUser (userID) {
 
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  res.redirect("/urls");
 
 });
 
@@ -113,7 +113,7 @@ app.get("/urls", (req, res) => {                ///user id cookies
 
 
 app.get("/urls/new", (req, res) => {
-  let userID = req.sesion.user_id
+  let userID = req.session.user_id
 
   if (!userID){
   res.redirect("/login")
