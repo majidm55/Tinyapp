@@ -1,3 +1,5 @@
+
+//variables and requirements//
 var cookieSession = require('cookie-session');
 var express = require("express");
 var app = express();
@@ -16,17 +18,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
 
-function generateRandomString() {
-  var randString = "";
-  const length = 6;
-  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-  for (let i = 0; i < length; i++)
-  randString += possible.charAt(Math.floor(Math.random() * possible.length));
-
-  console.log(randString);
-}
-
+//user database//
 var urlDatabase = {
   b6UTxQ: { longURL: "https://www.tsn.ca",
             userID: "userRandomID" },
@@ -48,30 +41,31 @@ var users = {
 
   }
 }
-// email match function
+
+//callback fucntions//
+function generateRandomString() {
+  var randString = "";
+  const length = 6;
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (let i = 0; i < length; i++)
+  randString += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  console.log(randString);
+}
+// user match function//
 function userMatch (email,password) {
   for (let id in users) {
 
     if (users[id].email === email) {
       if (bcrypt.compareSync(password, users[id].password)) {
         return users[id] ;
-        console.log(users[id],"we done");
       }
     }
   }
   return false;
 }
-
-// function passMatch (password) {
-//   for (id in users) {
-//     if (users[id].password === password) {
-//       return users[id];
-//     }
-//   }
-//   return false;
-// }
-
-
+//finding url in the database//
 function urlsForUser (userID) {
   let urls = {};
   for (shortURL in urlDatabase) {
@@ -82,25 +76,16 @@ function urlsForUser (userID) {
   return urls;
 }
 
-// function hashCheck(em, pw) {
-//    const userID = Object.keys(users)
-//    const user = userID.filter(item => {
-//        return users[item].email === em
-//    })
-//    if (user.length > 0) {
-//        return
-//    }
+//routes begin here///
 
+//homepage route
 
 app.get("/", (req, res) => {
   res.redirect("/urls");
 
 });
 
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
-
+//route for going to homepage using "/urls"  //
 app.get("/urls", (req, res) => {                ///user id cookies
   let userID = req.session.user_id
     if (!userID){
@@ -109,9 +94,10 @@ app.get("/urls", (req, res) => {                ///user id cookies
       let user = users[userID]
       let templateVars = { urls: urlsForUser(userID), user: user};
       res.render("urls_index",templateVars);
- });
 
+});
 
+// route to add new url//
 app.get("/urls/new", (req, res) => {
   let userID = req.session.user_id
 
@@ -128,13 +114,14 @@ app.post("/urls", (req, res) => {
   res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 
-
+//delete url route//
 app.post("/urls/:shortURL/delete", (req, res) => {
   let short = req.params.shortURL;
   delete urlDatabase[short];
   res.redirect("/urls");
 });
 
+// going to short URL//
 app.get("/urls/:id" , (req, res) => {
      let short = req.params.id;
    const longURL = urlDatabase[short];
@@ -145,25 +132,26 @@ app.get("/urls/:id" , (req, res) => {
   res.render("urls_show",templateVars);
 
 });
-
+//posting a long url//
 app.post("/urls/:id", (req, res) => {
   let add = req.body.longURL;
-  urlDatabase[req.params.id] = add
+  urlDatabase[req.params.id].longURL = add
+  console.log("did this work?", urlDatabase)
   res.redirect("/urls");
 });
 
+//logout route//
 app.post("/logout", (req,res) => {                     //Logout
-  res.clearCookie("user_id");
+  req.session = null;
   res.redirect("/urls");
 });
 
+//login route takes you to main page//
 app.post("/login", (req,res) => {
   email = req.body.email;
   password = req.body.password;
-  // console.log("posting login",email,password)
   let user = userMatch(email,password)
   if (user) {
-    // console.log("usermatched", user);
     let userID = user.id;
     req.session.user_id = userID;
     res.redirect("/urls");
@@ -172,15 +160,7 @@ app.post("/login", (req,res) => {
   res.status(403).send("Username or password incorrect");
 });
 
-
-app.get("/login", (req, res) => {
-res.render("urls_login");
-});
-
-app.get("/register", (req, res) => {
-res.render("urls_register");
-});
-
+ //register route//
 app.post("/register", (req,res) => {
 
 for(i in users){
@@ -190,7 +170,7 @@ for(i in users){
    }
  }
 
- if(req.body.email == "" || req.body.password == "") {
+ if(req.body.email === "" || req.body.password === "") {
    res.status(400)        // HTTP status 400: NotFound
   .send('Not found');}
 
@@ -207,17 +187,24 @@ for(i in users){
 
 });
 
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
+//login page route//
+app.get("/login", (req, res) => {
+res.render("urls_login");
 });
 
+//regitser page get route//
+app.get("/register", (req, res) => {
+res.render("urls_register");
+});
+
+//redirecting to the corresponding long url using a short url//
 app.get("/u/:shortURL", (req, res) => {
    let shortURL = req.params.shortURL;
    let longURL = urlDatabase[shortURL].longURL;
   res.redirect(longURL);
 });
 
-
+//assigning a port to the server //
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
