@@ -1,9 +1,13 @@
-<% if( user ) { %>
-  <form method="POST" action="/logout">
-      <h5>Logged in as: <%= user.email %></h5>
-      <button type="submit" class="btn-primary">Logout</button>
-  </form>
-<% } else { %>
-  <a href="/login" >Login</a> |
-  <a href="/register" >Register</a>
-<% } %>
+<header>
+    <h1 style="color:lightblue;">Tiny App</h1>
+</header>
+
+<% if(user_id){ %>
+    <form action="/logout" method="POST">
+        <h3>You have successfully logged in, <%=email%>!</h3>
+        <button>Log Out</button>
+    </form>
+  <% } else{ %>
+    <a href="/login">Login</a>
+    <a href="/register">Register</a>
+ <% } %>

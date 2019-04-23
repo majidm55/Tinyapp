@@ -11,7 +11,7 @@
 <body style="font-size:20px; padding:50px;">
   <header> <% include ./partials/_header %> </header>
     My URLs
-
+<% if(user_id){ %>
     <ul>
        <% for(var url in urls){ %>
 
@@ -25,12 +25,22 @@
 
               <a href="/urls/<%= url %>"><%= url %></a>
 
-              <a href="<%= urls[url].longURL%>">Long URL</a>
+              <a href="<%= urls[url].longURL%>"><%= urls[url].longURL%></a>
           </form>
         </li>
        <% }; %>
-
     </ul>
+
+<% } else{ %>
+    <ul>
+      <% for(var url in urls){ %>
+        <li>
+          <a href="/urls/<%= url %>"><%= url %></a>
+          <a href="<%= urls[url].longURL%>"><%= urls[url].longURL%></a>
+        </li>
+       <% }; %>
+ <% } %>
+
 </body>
 </body>
 </html>
