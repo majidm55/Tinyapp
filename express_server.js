@@ -102,21 +102,22 @@ app.get("/urls", (req, res) => {                ///user id cookies
 
 // route to add new url//
 app.get("/urls/new", (req, res) => {
-  let userID = req.session.user_id
-
-  if (!userID){
-  res.redirect("/login")
- }
-  let user = users[userID]
-  let templateVars = {user: user };
-  console.log(templateVars)
-  res.render("urls_new",templateVars)
- });
+  let user_id = req.session.user_id
+    if (!user_id){
+      res.redirect("/login");
+    } else {
+    let templateVars = {
+     'user_id' : user_id,
+     'urls': urlsForUser(user_id),
+     'email': (users[user_id] ? users[user_id].email: users[user_id])
+     };
+      res.render("urls_new",templateVars);
+    };
+});
 
 // posting to url//
 app.post("/urls", function(req, res) {
   let newURL = generateRandomString();
-  console.log(newURL,"is" );
     urlDatabase[newURL] = {
     longURL: req.body.longURL,
     userID: req.session.user_id
@@ -145,7 +146,6 @@ app.get("/urls/:id" , (req, res) => {
 app.post("/urls/:id", (req, res) => {
   let add = req.body.longURL;
   urlDatabase[req.params.id].longURL = add
-  console.log("did this work?", urlDatabase)
   res.redirect("/urls");
 });
 

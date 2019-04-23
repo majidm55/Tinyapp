@@ -4,6 +4,7 @@
 
 <% if(user_id){ %>
     <form action="/logout" method="POST">
+       <a href="/urls/new">Create New TinyURL</a>
         <h3>You have successfully logged in, <%=email%>!</h3>
         <button>Log Out</button>
     </form>
