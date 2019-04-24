@@ -5,7 +5,6 @@ var express = require("express");
 var app = express();
 var PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
-var cookieParser = require('cookie-parser')
 const bcrypt = require('bcrypt');
 
 app.use(cookieSession({
@@ -212,7 +211,6 @@ app.get("/login", (req, res) => {
 app.get("/register", (req, res) => {
   let templateVars = {
     user_id: req.session.user_id,
-    email: (users[req.session.user_id] ? users[req.session.user_id].email : users[req.session.user_id])
   }
   res.render("urls_register",templateVars);
 });
