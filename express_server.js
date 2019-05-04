@@ -138,30 +138,50 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 // going to edit short URL//
 app.get("/urls/:id", (req, res) => {
-  if (req.session.user_id) {
-    let templateVars = {
-      user_id: req.session.user_id,
-      shortURL: req.params.id,
-      longURL: urlDatabase[req.params.id],
-      email: (users[req.session.user_id] ? users[req.session.user_id].email : users[req.session.user_id])
-    };
-    res.render("urls_show", templateVars);
-  } else {
-    res.redirect("/login")
 
-  };
-});
-//posting a long url//
-app.post("/urls/:id", (req, res) => {
-  let user_id = req.session.user_id;
-  if (!user_id) {
-    res.send("Please login first")
-  } else {
-  urlDatabase[req.params.id].longURL = req.body.longURL;
-  res.redirect("/urls")
+  if (!req.session.user_id) {
+    return res.status(401).send('Please login or register');
   }
 
+  let shortURL = req.params.id;
+
+  if (!urlDatabase[shortURL]) {
+    return res.status(404).send('TinyURL does not exist');
+  }
+
+  if (req.session.user_id !== urlDatabase[shortURL].userID) {
+    return res.status(403).send('This URL does not belong to you');
+  }
+
+  let templateVars = {
+    user_id: req.session.user_id,
+    shortURL: req.params.id,
+    longURL: urlDatabase[req.params.id],
+    email: (users[req.session.user_id] ? users[req.session.user_id].email : users[req.session.user_id])
+  };
+  res.render("urls_show", templateVars);
+
 });
+
+
+
+
+//posting a long url//
+app.post("/urls/:id", (req, res) => {
+  if (!req.session.user_id) {
+    return res.status(401).send('Please login or register');
+  }
+
+  let shortURL = req.params.id;
+  console.log(urlDatabase[shortURL].userID);
+  if (req.session.user_id !== urlDatabase[shortURL].userID) {
+    return res.status(403).send('This URL does not belong to you');
+  }
+
+  urlDatabase[shortURL].longURL = req.body.longURL;
+  res.redirect('/urls');
+});
+
 
 //logout route//
 app.post("/logout", (req, res) => { //Logout
