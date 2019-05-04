@@ -141,8 +141,8 @@ app.get("/urls/:id", (req, res) => {
   if (req.session.user_id) {
     let templateVars = {
       user_id: req.session.user_id,
-      shortURL: req.params.shortURL,
-      longURL: urlDatabase[req.params.shortURL],
+      shortURL: req.params.id,
+      longURL: urlDatabase[req.params.id],
       email: (users[req.session.user_id] ? users[req.session.user_id].email : users[req.session.user_id])
     };
     res.render("urls_show", templateVars);
@@ -153,9 +153,14 @@ app.get("/urls/:id", (req, res) => {
 });
 //posting a long url//
 app.post("/urls/:id", (req, res) => {
-  let add = req.body.longURL;
-  urlDatabase[req.params.id].longURL = add
-  res.redirect("/urls");
+  let user_id = req.session.user_id;
+  if (!user_id) {
+    res.send("Please login first")
+  } else {
+  urlDatabase[req.params.id].longURL = req.body.longURL;
+  res.redirect("/urls")
+  }
+
 });
 
 //logout route//
